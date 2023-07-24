@@ -24,16 +24,16 @@ class ChatActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
-        var chatView = findViewById<RecyclerView>(R.id.chat_recycler_view)
-        var layoutManager = LinearLayoutManager(this)
+        val chatView = findViewById<RecyclerView>(R.id.chat_recycler_view)
+        val layoutManager = LinearLayoutManager(this)
         chatView.layoutManager = layoutManager
 
-        var database = FirebaseDatabase.getInstance();
+        val database = FirebaseDatabase.getInstance();
         database.setPersistenceEnabled(true)
         senderId = 1
         getterId = 2
-        var senderMessages = database.getReference("chats").child(senderId.toString()).child(getterId.toString())
-        var getterMessages = database.getReference("chats").child(getterId.toString()).child(senderId.toString())
+        val senderMessages = database.getReference("chats").child(senderId.toString()).child(getterId.toString())
+        val getterMessages = database.getReference("chats").child(getterId.toString()).child(senderId.toString())
         val chatList = mutableListOf<Chat>()
         val chatAdapter = ChatAdapter(chatList, getterId)
 
@@ -46,10 +46,10 @@ class ChatActivity : AppCompatActivity() {
                     val newChatList = mutableListOf<Chat>()
 
                     for (item in value){
-                        var chat = item.value as HashMap<String, Any>
+                        val chat = item.value as HashMap<String, Any>
                         Log.d(TAG, "Value is: $chat")
 
-                        var chatObj = chat.toDataClass<Chat>()
+                        val chatObj = chat.toDataClass<Chat>()
                         newChatList.add(chatObj)
 
                     }
@@ -69,7 +69,7 @@ class ChatActivity : AppCompatActivity() {
 
 
 
-        var sendButt = findViewById<Button>(R.id.sendButton)
+        val sendButt = findViewById<Button>(R.id.sendButton)
 
 
         sendButt.setOnClickListener {
@@ -80,19 +80,19 @@ class ChatActivity : AppCompatActivity() {
     }
 
     private fun sendMessage(senderMessages: DatabaseReference, getterMessages: DatabaseReference) {
-        var messageTxt = findViewById<EditText>(R.id.messageTextBox).text.toString()
+        val messageTxt = findViewById<EditText>(R.id.messageTextBox).text.toString()
         if(messageTxt != ""){
-            var newChatSender = Chat(senderId = senderId,
+            val newChatSender = Chat(senderId = senderId,
                 getterId = getterId,
                 text = messageTxt,
                 sendTime = Calendar.getInstance().time)
 
-            var senderRef = senderMessages.push()
+            val senderRef = senderMessages.push()
             senderRef.setValue(newChatSender.serializeToMap())
 
-            var newChatGetter = newChatSender
+            val newChatGetter = newChatSender
 
-            var getterRef = getterMessages.push()
+            val getterRef = getterMessages.push()
 
             getterRef.setValue(newChatGetter.serializeToMap())
 
