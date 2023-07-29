@@ -11,7 +11,7 @@ import gobejishvili.zangurashvili.finalproject.R
 import gobejishvili.zangurashvili.finalproject.entity.Chat
 import java.text.SimpleDateFormat
 
-class ChatAdapter(var chatMessages : List<Chat>, var getterId : Int) : RecyclerView.Adapter<ChatAdapter.ChatItemViewHolder>() {
+class ChatAdapter(var chatMessages : List<Chat>, var getterId : String) : RecyclerView.Adapter<ChatAdapter.ChatItemViewHolder>() {
     class ChatItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val senderMessage: TextView = itemView.findViewById(R.id.senderTextView)
         val getterMessage: TextView = itemView.findViewById(R.id.getterTextView)
@@ -31,7 +31,7 @@ class ChatAdapter(var chatMessages : List<Chat>, var getterId : Int) : RecyclerV
     }
 
     override fun onBindViewHolder(holder: ChatItemViewHolder, position: Int) {
-        if(chatMessages[position].getterId == getterId) {
+        if(chatMessages[position].getterId.equals(getterId)) {
             holder.getterBox.isVisible = false
             holder.getterTimestamp.isVisible = false
             holder.senderMessage.text = chatMessages[position].text

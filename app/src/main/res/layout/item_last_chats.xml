@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/lastMessageImage"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="40dp"
+        android:adjustViewBounds="true"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent=".2"
+        app:shapeAppearanceOverlay="@style/circleImageView"
+        app:strokeColor="@android:color/darker_gray"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/lastChatsName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="50dp"
+        android:ellipsize="end"
+        android:maxWidth="200dp"
+        android:maxLines="1"
+        android:text="NIKA NIKA"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/lastMessageImage"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/lastMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="25dp"
+        android:text="DIDIMESIGIDIDIMESIGIDIDIMESIGIDIDIMESIGIDIDIMESIGIDIDIMESIGIDIDIMESIGIDIDIMESIGIDIDIMESIGIDIDIMESIGIDIDIMESIGIDIDIMESIGIDIDIMESIGIDIDIMESIGIDIDIMESIGIDIDIMESIGIDIDIMESIGIDIDIMESIGIDIDIMESIGIDIDIMESIGI"
+        android:maxWidth="200dp"
+        android:maxLines="2"
+
+        android:ellipsize="end"
+        android:textColor="#808080"
+        app:layout_constraintStart_toEndOf="@+id/lastMessageImage"
+        app:layout_constraintTop_toBottomOf="@+id/lastChatsName" />
+
+    <TextView
+        android:id="@+id/lastMessagetimeText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="30dp"
+        android:text="Time"
+        android:textColor="#B8B8B8"
+        app:layout_constraintBottom_toBottomOf="@+id/lastChatsName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/lastChatsName" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

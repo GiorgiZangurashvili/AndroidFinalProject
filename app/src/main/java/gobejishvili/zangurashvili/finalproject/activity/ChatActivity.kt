@@ -1,13 +1,17 @@
 package gobejishvili.zangurashvili.finalproject.activity
 
 import android.content.ContentValues.TAG
+import android.content.Intent
+import android.media.Image
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.google.gson.Gson
@@ -19,8 +23,8 @@ import java.util.*
 import kotlin.collections.HashMap
 
 class ChatActivity : AppCompatActivity() {
-    var senderId : Int = 0;
-    var getterId : Int = 0;
+    var senderId : String = "";
+    var getterId : String = "";
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
@@ -30,8 +34,12 @@ class ChatActivity : AppCompatActivity() {
 
         val database = FirebaseDatabase.getInstance();
         database.setPersistenceEnabled(true)
-        senderId = 1
-        getterId = 2
+
+        var extras = intent.extras
+
+        senderId = extras?.getString ("senderId").toString();
+        getterId = extras?.getString ("getterId").toString();
+        database.getReference().push()
         val senderMessages = database.getReference("chats").child(senderId.toString()).child(getterId.toString())
         val getterMessages = database.getReference("chats").child(getterId.toString()).child(senderId.toString())
         val chatList = mutableListOf<Chat>()
@@ -76,6 +84,13 @@ class ChatActivity : AppCompatActivity() {
             sendMessage(senderMessages, getterMessages)
         }
 
+        val backButt = findViewById<ImageView>(R.id.backbutt)
+
+
+        backButt.setOnClickListener {
+            val intent = Intent(this@ChatActivity, MainActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 
