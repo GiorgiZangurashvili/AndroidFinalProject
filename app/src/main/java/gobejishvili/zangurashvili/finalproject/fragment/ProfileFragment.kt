@@ -1,60 +1,170 @@
 package gobejishvili.zangurashvili.finalproject.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.database.*
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import gobejishvili.zangurashvili.finalproject.R
+import gobejishvili.zangurashvili.finalproject.activity.LoginActivity
+import gobejishvili.zangurashvili.finalproject.databinding.FragmentProfileBinding
+import gobejishvili.zangurashvili.finalproject.entity.User
+import java.util.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [ProfileFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ProfileFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var binding: FragmentProfileBinding
+    private lateinit var mAuth: FirebaseAuth
+    private lateinit var mDatabaseReference: DatabaseReference
+    private lateinit var mStorage: StorageReference
+    private val emailSuffix = "@freeuni.edu.ge"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        binding = FragmentProfileBinding.inflate(inflater, container, false)
+
+        mAuth = FirebaseAuth.getInstance()
+        mStorage = FirebaseStorage.getInstance().reference.child("profilePictures")
+        mDatabaseReference = FirebaseDatabase
+            .getInstance("https://android-final-project-877bc-default-rtdb.europe-west1.firebasedatabase.app")
+            .getReference("Users")
+        prepareUI()
+
+        setOnClickListeners()
+
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProfileFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun prepareUI() {
+        mDatabaseReference.addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    for (currentSnapshot in snapshot.children){
+                        val currentUser = currentSnapshot.getValue(User::class.java)
+                        if (currentUser != null) {
+                            if (currentUser.userId == mAuth.currentUser?.uid!!){
+                                binding.name.setText(currentUser.username)
+                                binding.profession.setText(currentUser.profession)
+                                Glide
+                                    .with(activity!!)
+                                    .load(currentUser.profilePictureUrl)
+                                    .apply(RequestOptions.circleCropTransform())
+                                    .into(binding.profilePic)
+                                break
+                            }
+
+                        }
+                    }
                 }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+    }
+    private fun setOnClickListeners(){
+        binding.signout.setOnClickListener {
+            mAuth.signOut()
+            startActivity(Intent(activity, LoginActivity::class.java))
+            activity?.finish()
+        }
+
+        binding.update.setOnClickListener {
+            updateUserDataInDatabase()
+        }
+
+        binding.profilePic.setOnClickListener {
+            openGalleryLauncher.launch("image/*")
+        }
+    }
+
+
+
+    //    set image from gallery
+//    binding.signup.setOnClickListener {
+//        openGalleryLauncher.launch("image/*")
+//    }
+    private val openGalleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let { imageUri ->
+            Glide
+                .with(requireActivity())
+                .load(imageUri)
+                .apply(RequestOptions.circleCropTransform())
+                .into(binding.profilePic)
+
+            val profilePictureRef = mStorage.child(UUID.randomUUID().toString())
+            val upload = profilePictureRef.putFile(imageUri)
+
+            upload.addOnSuccessListener {
+                profilePictureRef.downloadUrl.addOnSuccessListener {downloadUri ->
+                    val url = downloadUri.toString()
+                    updateUserImageInDatabase(url)
+                }
+            }.addOnFailureListener{
+                TODO("Not implemented yet")
+            }
+        }
+    }
+
+    private fun updateUserImageInDatabase(imageUrl: String){
+        val userReference = mDatabaseReference.child(mAuth.currentUser?.uid!!)
+
+        userReference.child("profilePictureUrl").setValue(imageUrl)
+            .addOnSuccessListener {
+                Toast.makeText(activity, "Image successfully saved to database", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(activity, "Couldn't save image to database", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun updateUserDataInDatabase(){
+        val userReference = mDatabaseReference.child(mAuth.currentUser?.uid!!)
+
+        userReference.child("username").setValue(binding.name.text.toString())
+            .addOnSuccessListener {
+                val user = mAuth.currentUser
+                val newUsername = binding.name.text.toString() + emailSuffix
+
+                user?.updateEmail(newUsername)?.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(
+                            activity,
+                            "Username successfully saved to database",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else {
+                        Toast.makeText(
+                            activity,
+                            "Couldn't save username to database",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(activity, "Couldn't save username to database", Toast.LENGTH_SHORT).show()
+            }
+        userReference.child("profession").setValue(binding.profession.text.toString())
+            .addOnSuccessListener {
+                Toast.makeText(activity, "Profession successfully saved to database", Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(activity, "Couldn't save profession to database", Toast.LENGTH_SHORT).show()
             }
     }
 }
