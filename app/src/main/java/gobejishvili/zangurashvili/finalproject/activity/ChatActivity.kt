@@ -137,9 +137,10 @@ class ChatActivity : AppCompatActivity() {
         var lastMessage = LastChat(senderId, "", message,
             sendTime = Calendar.getInstance().time, null)
 
-        senderLastMessages.updateChildren(lastMessage.serializeToMap())
-
         getterLastMessages.updateChildren(lastMessage.serializeToMap())
+
+        lastMessage.userId = getterId
+        senderLastMessages.updateChildren(lastMessage.serializeToMap())
 
     }
 

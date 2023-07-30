@@ -72,7 +72,7 @@ class UserListActivity : AppCompatActivity() {
 
     private fun updateUsers(searchBarText: String){
         mDatabaseReference = FirebaseDatabase
-            .getInstance("https://android-final-project-877bc-default-rtdb.europe-west1.firebasedatabase.app")
+            .getInstance()
             .getReference("Users")
 
         mDatabaseReference.addValueEventListener(object: ValueEventListener {

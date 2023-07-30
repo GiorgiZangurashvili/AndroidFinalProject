@@ -86,7 +86,7 @@ class ChatListFragment : Fragment(R.layout.fragment_chatlist) {
                             var lastMessage =
                                 lastMessagesList.first({ it.userId.equals(user.userId) })
                             lastMessage.userName = user.username
-
+                            lastChatAdapter.notifyDataSetChanged()
                             Glide.with(this@ChatListFragment)
                                 .asBitmap()
                                 .load(user.profilePictureUrl)
@@ -121,8 +121,8 @@ class ChatListFragment : Fragment(R.layout.fragment_chatlist) {
                 val clickedItem: LastChat = lastMessagesList[position]
 
                 val intent = Intent(context, ChatActivity::class.java)
-                intent.putExtra("senderId", currentFirebaseUser!!.uid)
-                intent.putExtra("getterId", clickedItem.userId)
+                intent.putExtra("getterId", currentFirebaseUser!!.uid)
+                intent.putExtra("senderId", clickedItem.userId)
                 startActivity(intent)
             }
         })
