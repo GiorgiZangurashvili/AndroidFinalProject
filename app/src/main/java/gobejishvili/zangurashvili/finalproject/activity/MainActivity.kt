@@ -3,8 +3,11 @@ package gobejishvili.zangurashvili.finalproject.activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.widget.Button
+import android.widget.ImageButton
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -21,6 +24,7 @@ import gobejishvili.zangurashvili.finalproject.R
 import gobejishvili.zangurashvili.finalproject.adapter.LastChatsAdapter
 import gobejishvili.zangurashvili.finalproject.entity.LastChat
 import gobejishvili.zangurashvili.finalproject.entity.User
+import gobejishvili.zangurashvili.finalproject.fragment.ChatListFragment
 import java.util.*
 
 
@@ -29,128 +33,30 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         FirebaseApp.initializeApp(this)
-        val currentFirebaseUser = FirebaseAuth.getInstance().currentUser
 
-        var chatView = findViewById<RecyclerView>(R.id.chat_panel_recycler_view)
-        var layoutManager = LinearLayoutManager(this)
-        chatView.layoutManager = layoutManager
+        if (savedInstanceState == null) {
+            loadFragment(ChatListFragment())
+        }
 
-        var lastMessagesList = mutableListOf<LastChat>()
+        val buttonA: ImageButton = findViewById(R.id.navigationButton1)
+        val buttonB: ImageButton = findViewById(R.id.navigationbutton2)
 
+        buttonA.setOnClickListener {
+            loadFragment(ChatListFragment())
+        }
 
-        val lastChatAdapter = LastChatsAdapter(lastMessagesList)
-
-
-        val database = FirebaseDatabase.getInstance();
-        val lastMessages = database.getReference("lastMessages")
-            .child(currentFirebaseUser!!.uid)
-
-
-        lastMessages.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val value = snapshot.getValue<HashMap<String, Any>>()
-                if (value != null) {
-                    val lastChats = mutableListOf<LastChat>()
-                    for (item in value){
-                        val lastChatStr = item.value as HashMap<String, Any>
-
-                        val lastChat = lastChatStr.toDataClass<LastChat>()
-
-                        lastChats.add(lastChat)
-
-                    }
-
-                    lastMessagesList = lastChats
-
-                }
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-
-        })
-
-        val usersRef = FirebaseDatabase.getInstance().getReference("Users")
-
-        usersRef.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val value = snapshot.getValue<HashMap<String, Any>>()
-                if (value != null) {
-                    for (item in value) {
-                        if (lastMessagesList.any({ it.userId.equals(item.key) })) {
-                            val userStr = item.value as HashMap<String, Any>
-
-                            val user = userStr.toDataClass<User>()
-
-                            var lastMessage =
-                                lastMessagesList.first({ it.userId.equals(user.userId) })
-                            lastMessage.userName = user.username
-
-                            Glide.with(this@MainActivity)
-                                .asBitmap()
-                                .load(user.profilePictureUrl)
-                                .into(object : SimpleTarget<Bitmap>() {
-                                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                                        lastMessage.ImageBitmap = resource
-                                        lastChatAdapter.notifyDataSetChanged()
-                                    }
-                                })
-
-                        }
-                    }
-                }
-
-                lastMessagesList.sortBy { it.sendTime }
-                lastChatAdapter.lastChats = lastMessagesList
-                lastChatAdapter.notifyDataSetChanged()
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
-            }
-        })
+/*        buttonB.setOnClickListener {
+            loadFragment(FragmentB())
+        }*/
 
 
-
-        lastChatAdapter.setOnItemClickListener(object : LastChatsAdapter.OnItemClickListener {
-            override fun onItemClick(position: Int) {
-                val clickedItem: LastChat = lastMessagesList[position]
-
-                val intent = Intent(this@MainActivity, ChatActivity::class.java)
-                intent.putExtra("senderId" , currentFirebaseUser!!.uid)
-                intent.putExtra("getterId" , clickedItem.userId)
-                startActivity(intent)
-            }
-        })
-        chatView.adapter = lastChatAdapter
-
-
-        var searchView = findViewById<SearchView>(R.id.lastMessagesSearch)
-
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                filterItems(newText, lastMessagesList, lastChatAdapter)
-                return true
-            }
-        })
     }
 
-    private fun filterItems(
-        query: String,
-        lastMessagesList: MutableList<LastChat>,
-        lastChatAdapter: LastChatsAdapter
-    ) {
-        val filteredItems = lastMessagesList.filter { item ->
-            item.userName.contains(query, true) }
-
-
-        lastChatAdapter.lastChats = filteredItems
-
-        lastChatAdapter.notifyDataSetChanged()
+    fun loadFragment(fragment: Fragment) {
+        val fragmentManager = supportFragmentManager
+        val transaction = fragmentManager.beginTransaction()
+        transaction.replace(R.id.fragment_container, fragment)
+        transaction.addToBackStack(null)
+        transaction.commit()
     }
 }
