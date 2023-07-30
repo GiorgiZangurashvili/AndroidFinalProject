@@ -48,7 +48,6 @@ class LoginActivity : AppCompatActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // sign in success
-                    // aq gadaxteba ProfileActivity-ze
                     startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                 } else {
                     // sign in failed
