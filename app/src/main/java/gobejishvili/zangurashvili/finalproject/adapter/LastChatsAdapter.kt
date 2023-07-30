@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.imageview.ShapeableImageView
 import gobejishvili.zangurashvili.finalproject.R
@@ -27,7 +26,7 @@ class LastChatsAdapter(var lastChats : List<LastChat>) : RecyclerView.Adapter<La
         val nameText: TextView = itemView.findViewById(R.id.lastChatsName)
         val timeText: TextView = itemView.findViewById(R.id.lastMessagetimeText)
         var messageText: TextView = itemView.findViewById(R.id.lastMessage)
-        val lastMessageImage: ShapeableImageView = itemView.findViewById(R.id.lastMessageImage)
+        val lastMessageImage: ShapeableImageView = itemView.findViewById(R.id.chatProfilePic)
 
 
     }
@@ -46,6 +45,7 @@ class LastChatsAdapter(var lastChats : List<LastChat>) : RecyclerView.Adapter<La
         holder.messageText.text = lastChat.text
         holder.nameText.text = lastChat.userName
         holder.timeText.text = formatTime(lastChat.sendTime)
+        holder.lastMessageImage.setImageBitmap(lastChat.ImageBitmap)
     }
 
     fun setOnItemClickListener(listener: OnItemClickListener) {

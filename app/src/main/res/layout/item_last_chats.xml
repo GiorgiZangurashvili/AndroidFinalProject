@@ -6,7 +6,7 @@
     android:layout_height="wrap_content">
 
     <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/lastMessageImage"
+        android:id="@+id/chatProfilePic"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginTop="40dp"
@@ -35,7 +35,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textSize="25sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/lastMessageImage"
+        app:layout_constraintStart_toEndOf="@+id/chatProfilePic"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -50,7 +50,7 @@
 
         android:ellipsize="end"
         android:textColor="#808080"
-        app:layout_constraintStart_toEndOf="@+id/lastMessageImage"
+        app:layout_constraintStart_toEndOf="@+id/chatProfilePic"
         app:layout_constraintTop_toBottomOf="@+id/lastChatsName" />
 
     <TextView

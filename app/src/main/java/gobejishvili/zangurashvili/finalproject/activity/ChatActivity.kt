@@ -1,17 +1,20 @@
 package gobejishvili.zangurashvili.finalproject.activity
 
-import android.content.ContentValues.TAG
 import android.content.Intent
-import android.media.Image
+import android.graphics.Bitmap
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.FirebaseApp
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.google.gson.Gson
@@ -19,6 +22,8 @@ import com.google.gson.reflect.TypeToken
 import gobejishvili.zangurashvili.finalproject.R
 import gobejishvili.zangurashvili.finalproject.adapter.ChatAdapter
 import gobejishvili.zangurashvili.finalproject.entity.Chat
+import gobejishvili.zangurashvili.finalproject.entity.LastChat
+import gobejishvili.zangurashvili.finalproject.entity.User
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -33,15 +38,19 @@ class ChatActivity : AppCompatActivity() {
         chatView.layoutManager = layoutManager
 
         val database = FirebaseDatabase.getInstance();
-        database.setPersistenceEnabled(true)
 
         var extras = intent.extras
 
         senderId = extras?.getString ("senderId").toString();
         getterId = extras?.getString ("getterId").toString();
-        database.getReference().push()
-        val senderMessages = database.getReference("chats").child(senderId.toString()).child(getterId.toString())
-        val getterMessages = database.getReference("chats").child(getterId.toString()).child(senderId.toString())
+
+
+        val getterMessages = database.getReference("chats").child(getterId).child(senderId)
+        val senderMessages = database.getReference("chats").child(senderId).child(getterId)
+        val getterLastMessages = database.getReference("lastMessages").child(getterId).child(senderId)
+        val senderLastMessages = database.getReference("lastMessages").child(senderId).child(getterId)
+        val usersRef = database.getReference("Users").child(senderId)
+        var getterUser : User
         val chatList = mutableListOf<Chat>()
         val chatAdapter = ChatAdapter(chatList, getterId)
 
@@ -55,7 +64,6 @@ class ChatActivity : AppCompatActivity() {
 
                     for (item in value){
                         val chat = item.value as HashMap<String, Any>
-                        Log.d(TAG, "Value is: $chat")
 
                         val chatObj = chat.toDataClass<Chat>()
                         newChatList.add(chatObj)
@@ -70,9 +78,38 @@ class ChatActivity : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-                System.out.println("Firebase" +  "Failed to read value." + error.toException())
+                Toast.makeText(this@ChatActivity,"Firebase" +  "Failed to read value." + error.toException(), Toast.LENGTH_SHORT).show()
+
             }
 
+        })
+
+
+        usersRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val value = dataSnapshot.getValue<HashMap<String, Any>>()
+                if (value != null) {
+                    getterUser = value.toDataClass<User>()
+                    var nameText = findViewById<TextView>(R.id.nameTextView)
+                    var occupationText = findViewById<TextView>(R.id.occupationTextView)
+                    var imagePic = findViewById<ShapeableImageView>(R.id.chatProfilePic)
+                    nameText.text = getterUser.username
+                    occupationText.text = getterUser.profession
+
+                    Glide.with(this@ChatActivity)
+                        .asBitmap()
+                        .load(getterUser.profilePictureUrl)
+                        .into(object : SimpleTarget<Bitmap>() {
+                            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                                imagePic.setImageBitmap(resource)
+                            }
+                        })
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                println("Error reading from Firebase: ${error.message}")
+            }
         })
 
 
@@ -81,7 +118,7 @@ class ChatActivity : AppCompatActivity() {
 
 
         sendButt.setOnClickListener {
-            sendMessage(senderMessages, getterMessages)
+            sendMessage(senderMessages, getterMessages, senderLastMessages, getterLastMessages)
         }
 
         val backButt = findViewById<ImageView>(R.id.backbutt)
@@ -94,7 +131,24 @@ class ChatActivity : AppCompatActivity() {
 
     }
 
-    private fun sendMessage(senderMessages: DatabaseReference, getterMessages: DatabaseReference) {
+    private fun saveLastMessages(senderLastMessages: DatabaseReference,
+                                 getterLastMessages: DatabaseReference,
+                                 message: String) {
+        var lastMessage = LastChat(senderId, "", message,
+            sendTime = Calendar.getInstance().time, null)
+
+        senderLastMessages.updateChildren(lastMessage.serializeToMap())
+
+        getterLastMessages.updateChildren(lastMessage.serializeToMap())
+
+    }
+
+    private fun sendMessage(
+        senderMessages: DatabaseReference,
+        getterMessages: DatabaseReference,
+        senderLastMessages: DatabaseReference,
+        getterLastMessages: DatabaseReference
+    ) {
         val messageTxt = findViewById<EditText>(R.id.messageTextBox).text.toString()
         if(messageTxt != ""){
             val newChatSender = Chat(senderId = senderId,
@@ -111,6 +165,7 @@ class ChatActivity : AppCompatActivity() {
 
             getterRef.setValue(newChatGetter.serializeToMap())
 
+            saveLastMessages(senderLastMessages, getterLastMessages, messageTxt)
         }
     }
 }
