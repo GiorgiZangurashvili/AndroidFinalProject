@@ -5,5 +5,7 @@ data class User(
     var username: String,
     var profilePictureUrl: String,
     var profession: String
-)
+){
+    constructor() : this("", "", "", "")
+}
 
