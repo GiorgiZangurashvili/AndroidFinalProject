@@ -37,7 +37,7 @@
 
                     <ImageView
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
+                        android:layout_height="@dimen/medium_size"
                         android:fitsSystemWindows="true"
                         android:scaleType="centerCrop"
                         app:layout_collapseMode="parallax" />
@@ -45,8 +45,8 @@
                     <androidx.appcompat.widget.Toolbar
                         android:id="@+id/toolbar"
                         android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        android:layout_margin="2dp"
+                        android:layout_height="@dimen/medium_size"
+                        android:layout_margin="@dimen/tiny_margin"
                         app:layout_collapseMode="pin"
                         app:popupTheme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
@@ -55,15 +55,15 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="200dp"
+                        android:layout_height="@dimen/standard_size"
                         android:background="@drawable/background"
                         android:visibility="visible">
 
                         <androidx.constraintlayout.widget.ConstraintLayout
                             android:layout_width="match_parent"
-                            android:layout_height="120dp"
-                            android:layout_marginStart="20dp"
-                            android:layout_marginEnd="20dp"
+                            android:layout_height="@dimen/medium_custom_size3"
+                            android:layout_marginStart="@dimen/standard_larger_margin"
+                            android:layout_marginEnd="@dimen/standard_larger_margin"
                             android:visibility="visible"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -72,10 +72,10 @@
 
                             <SearchView
                                 android:id="@+id/lastMessagesSearch"
-                                android:layout_width="0dp"
+                                android:layout_width="@dimen/no_size"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="1dp"
-                                android:layout_marginEnd="1dp"
+                                android:layout_marginStart="@dimen/miniscule_margin"
+                                android:layout_marginEnd="@dimen/miniscule_margin"
                                 android:background="@drawable/round_border_grey_search"
                                 android:iconifiedByDefault="false"
                                 app:layout_constraintBottom_toBottomOf="parent"
