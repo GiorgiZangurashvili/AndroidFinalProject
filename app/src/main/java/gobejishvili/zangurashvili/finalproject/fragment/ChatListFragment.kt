@@ -87,19 +87,20 @@ class ChatListFragment : Fragment(R.layout.fragment_chatlist) {
                                 lastMessagesList.first({ it.userId.equals(user.userId) })
                             lastMessage.userName = user.username
                             lastChatAdapter.notifyDataSetChanged()
-                            Glide.with(this@ChatListFragment)
-                                .asBitmap()
-                                .load(user.profilePictureUrl)
-                                .into(object : SimpleTarget<Bitmap>() {
-                                    override fun onResourceReady(
-                                        resource: Bitmap,
-                                        transition: Transition<in Bitmap>?
-                                    ) {
-                                        lastMessage.ImageBitmap = resource
-                                        lastChatAdapter.notifyDataSetChanged()
-                                    }
-                                })
-
+                            activity?.let { fragmentActivity ->
+                                Glide.with(fragmentActivity)
+                                    .asBitmap()
+                                    .load(user.profilePictureUrl)
+                                    .into(object : SimpleTarget<Bitmap>() {
+                                        override fun onResourceReady(
+                                            resource: Bitmap,
+                                            transition: Transition<in Bitmap>?
+                                        ) {
+                                            lastMessage.ImageBitmap = resource
+                                            lastChatAdapter.notifyDataSetChanged()
+                                        }
+                                    })
+                            }
                         }
                     }
                 }

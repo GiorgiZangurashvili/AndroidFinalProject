@@ -57,11 +57,13 @@ class ProfileFragment : Fragment() {
                             if (currentUser.userId == mAuth.currentUser?.uid!!){
                                 binding.name.setText(currentUser.username)
                                 binding.profession.setText(currentUser.profession)
-                                Glide
-                                    .with(activity!!)
-                                    .load(currentUser.profilePictureUrl)
-                                    .apply(RequestOptions.circleCropTransform())
-                                    .into(binding.profilePic)
+                                activity?.let { fragmentActivity ->
+                                    Glide
+                                        .with(fragmentActivity)
+                                        .load(currentUser.profilePictureUrl)
+                                        .apply(RequestOptions.circleCropTransform())
+                                        .into(binding.profilePic)
+                                }
                                 break
                             }
 
