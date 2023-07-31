@@ -2,4 +2,18 @@
     <string name="app_name">FinalProject</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="TextView">TextView</string>
+    <string name="notRegistered">Not registered?</string>
+    <string name="Button">Button</string>
+    <string name="signUp">SIGN UP</string>
+    <string name="signIn">SIGN IN</string>
+    <string name="signOut">SIGN OUT</string>
+    <string name="name">Name</string>
+    <string name="profession">Profession</string>
+    <string name="update">Update</string>
+    <string name="nickname">Enter your nickname</string>
+    <string name="password">Enter your password</string>
+    <string name="job">What I do</string>
+    <string name="search">Search</string>
+    <string name="desc">desc</string>
 </resources>

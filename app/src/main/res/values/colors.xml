@@ -10,4 +10,10 @@
     <color name="blue">#5479f1</color>
     <color name="editTextColor">#F2F6FE</color>
     <color name="loginRegisterTextColor">#96999c</color>
+    <color name="color1">#808080</color>
+    <color name="color2">#FFFFFF</color>
+    <color name="color3">#393943</color>
+    <color name="color4">#B8B8B8</color>
+    <color name="color5">#D8D8D8</color>
+    <color name="color6">#D8CFCFCF</color>
 </resources>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="miniscule_margin">1dp</dimen>
+    <dimen name="tiny_margin">2dp</dimen>
+    <dimen name="small_margin">4dp</dimen>
+    <dimen name="medium_small_margin">8dp</dimen>
+    <dimen name="small_medium_margin">10dp</dimen>
+    <dimen name="small_larger_margin">12dp</dimen>
+    <dimen name="small_custom_margin">13dp</dimen>
+    <dimen name="standard_margin">16dp</dimen>
+    <dimen name="standard_larger_margin">20dp</dimen>
+    <dimen name="standard_custom_margin">25dp</dimen>
+    <dimen name="medium_margin">32dp</dimen>
+    <dimen name="big_custom_margin">76dp</dimen>
+
+    <dimen name="no_size">0dp</dimen>
+    <dimen name="small_size">30dp</dimen>
+    <dimen name="small_large_size">36dp</dimen>
+    <dimen name="small_larger_size">40dp</dimen>
+    <dimen name="small_medium_size">50dp</dimen>
+    <dimen name="small_medium_custom_size">52dp</dimen>
+    <dimen name="small_custom_size1">60dp</dimen>
+    <dimen name="small_custom_size2">79dp</dimen>
+    <dimen name="small_custom_size3">91dp</dimen>
+    <dimen name="medium_size">100dp</dimen>
+    <dimen name="medium_custom_size1">111dp</dimen>
+    <dimen name="medium_custom_size2">116dp</dimen>
+    <dimen name="medium_custom_size3">120dp</dimen>
+    <dimen name="standard_size">200dp</dimen>
+    <dimen name="standard_larger_size">210dp</dimen>
+    <dimen name="large_size">250dp</dimen>
+    <dimen name="bigger_large_size">300dp</dimen>
+    <dimen name="big_size">350dp</dimen>
+    <dimen name="big_custom_size">368dp</dimen>
+
+    <dimen name="small_text_size">12sp</dimen>
+    <dimen name="medium_text_size">20sp</dimen>
+    <dimen name="medium_large_size">24sp</dimen>
+    <dimen name="medium_custom_size">25sp</dimen>
+    <dimen name="big_custom_text_size">34sp</dimen>
+</resources>
