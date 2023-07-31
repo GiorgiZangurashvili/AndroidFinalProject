@@ -24,9 +24,6 @@ class UserListActivity : AppCompatActivity() {
     private lateinit var userList: ArrayList<User>
     private lateinit var adapter: UserAdapter
 
-    private var searchTimeoutHandler: Handler = Handler()
-    private val debounceTimeout: Long = 500
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUserListBinding.inflate(layoutInflater)
@@ -44,6 +41,7 @@ class UserListActivity : AppCompatActivity() {
         }
 
         userList = ArrayList()
+        getAllUsers()
         adapter = UserAdapter(userList, mAuth)
 
         userRecyclerView = binding.usersRecyclerView
@@ -61,9 +59,7 @@ class UserListActivity : AppCompatActivity() {
             override fun afterTextChanged(s: Editable?) {
                 val searchBarText: String = s.toString()
                 if (searchBarText.length >= 3){
-                    searchTimeoutHandler.postDelayed({
-                        updateUsers(searchBarText)
-                    }, debounceTimeout)
+                    updateUsers(searchBarText)
                 }
             }
 
@@ -82,6 +78,35 @@ class UserListActivity : AppCompatActivity() {
                     for (currentSnapshot in snapshot.children){
                         val currentUser = currentSnapshot.getValue(User::class.java)
                         if (currentUser?.username!!.contains(searchBarText) && currentUser?.userId!! != mAuth.currentUser?.uid!!){
+                            userList.add(currentUser)
+                        }
+                    }
+                    adapter.notifyDataSetChanged()
+                }
+                if (userList.size == 0){
+                    Toast.makeText(this@UserListActivity, "Such username doesn't exist", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                TODO("Not yet implemented")
+            }
+
+        })
+    }
+
+    private fun getAllUsers(){
+        mDatabaseReference = FirebaseDatabase
+            .getInstance()
+            .getReference("Users")
+
+        mDatabaseReference.addValueEventListener(object: ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                userList.clear()
+                if (snapshot.exists()){
+                    for (currentSnapshot in snapshot.children){
+                        val currentUser = currentSnapshot.getValue(User::class.java)
+                        if (currentUser?.userId!! != mAuth.currentUser?.uid!!){
                             userList.add(currentUser)
                         }
                     }

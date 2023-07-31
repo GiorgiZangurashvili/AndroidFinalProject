@@ -168,6 +168,7 @@ class ChatActivity : AppCompatActivity() {
 
             saveLastMessages(senderLastMessages, getterLastMessages, messageTxt)
         }
+        findViewById<EditText>(R.id.messageTextBox).setText("")
     }
 }
 

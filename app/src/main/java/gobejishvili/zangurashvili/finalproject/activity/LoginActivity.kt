@@ -19,7 +19,6 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        FirebaseApp.initializeApp(this)
         val database = FirebaseDatabase.getInstance();
         //initialize FirebaseAuth instance
         mAuth = FirebaseAuth.getInstance()
